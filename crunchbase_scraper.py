@@ -35,23 +35,9 @@ time.sleep(3)
 for handle in browser.window_handles:
 	browser.switch_to.window(handle)
 
-# Bringing up advance search
-# browser.get('https://www.crunchbase.com/discover/organization.companies/')
-# browser.get('https://www.crunchbase.com/searches')
-
-
-# WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//a[contains(@title,'Small Saas in Sweden (SSS)')]")))
-
-# # Find & print the saved searches
-# elemList = browser.find_elements_by_partial_link_text('/discover/saved/')
-# print(elemList)
-# savedLink = 'https://www.crunchbase.com/discover/saved/small-saas-in-sweden-sss/d6e78ad2-4b8f-41ac-a8e4-9442092f5545'
-
 # Insert saved search link here
 browser.get('https://www.crunchbase.com/discover/saved/all-small-saas/22edce87-8ef7-44c6-8f9d-3371c130e7d3')
 
-# WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//div[starts-with(@aria-describedby, 'ui-id-')]//span[@class='ui-button-text' and text()='Continue']"))).click()
-# WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@aria-label, 'Next')]")))
 time.sleep(3)
 cleanedLinks = []
 
@@ -70,18 +56,20 @@ while True:
 		break
 
 	browser.get(elem.get_attribute('href'))
+
+	# Wait enough for elements to load
 	time.sleep(5)
 
 
 print("{} Links found".format(len(cleanedLinks)))
 
 # Creating and adding the first row to CSV
-# Change CSV file name here
 csvfile = open(filenameCSV+'.csv', 'w', newline='', encoding='utf-8')
 c = csv.writer(csvfile)
 c.writerow(['company_name', 'company_link', 'category'])
+
 browser.implicitly_wait(1)
-# category_text = ''
+name = ''
 for page in cleanedLinks:
 	browser.get(page)
 
@@ -98,21 +86,7 @@ for page in cleanedLinks:
 	try:
 		link = browser.find_element(By.XPATH, "//a[contains(@role, 'link')]").get_attribute('href')
 	except:
-		try:
-			assert 'Access to this page has been denied' in browser.title
-			done = input("press & hold")
-		except:
-			pass
-
-
-
-	# categories = browser.find_elements(By.XPATH, "//a[@class='cb-overflow-ellipsis'][@_ngcontent-client-app-c189='']")
-	# categories = browser.find_elements(By.XPATH, "//div[@class='layout-row layout-align-start-center']//div[@class='cb-overflow-ellipsis']]")
-
-
-	# for category in categories:
-	# 	category_text += category.text + " "
-
+		break
 	
 	print("{} {}".format(name, link))
 	c.writerow([name, link])
